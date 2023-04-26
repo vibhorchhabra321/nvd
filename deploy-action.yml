@@ -1,0 +1,50 @@
+name: terragrunt-apply reusable
+on:
+  workflow_call:
+    inputs: 
+      environment: 
+        description: deployment environment
+        type: string
+        required: true
+      working-directory:
+        description: "working directory"
+        required: true
+        type: string
+
+jobs:
+  eu-west-1:
+    runs-on: [Linux, ntt, uk, self-hosted]
+    container: 
+      image: ghcr.io/lexisnexis-rba/tas/xg5-terraform/terragrunt:0.19.11
+    permissions:
+      packages: read
+      id-token: write
+      contents: write
+      issues: write
+      pull-requests: write
+    steps: 
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with: 
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::485575125510:role/github-ADFS-TAS-XG5-Terraform
+          role-session-name: XG5TERRAFORMGithubSession
+
+      - name: terragrunt refresh/validate 
+        id: validate
+        run: |
+          terragrunt refresh
+          terragrunt validate
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: terragrunt apply 
+        id: apply
+        run: |
+          terragrunt plan -out=$PWD/tf.plan
+          terragrunt apply $PWD/tf.plan
+          terragrunt output -json > $PWD/tfout.json
+        working-directory: ${{ inputs.working-directory }}
+      

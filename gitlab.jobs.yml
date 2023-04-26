@@ -1,0 +1,131 @@
+build-ris-bussvcs-prod/eu-west-1/dr:
+  extends: .build
+  variables:
+    ROOT_DIR: 'live/ris-bussvcs-prod/eu-west-1/dr'
+    AWS_PROFILE: 'ris-bussvcs-prod'
+  before_script:
+    - export ADFS_PROFILE=(
+        'ris-bussvcs-prod'
+      )
+    - export ADFS_ROLE_ARN=(
+        'arn:aws:iam::485575125510:role/ADFS-TAS-Terraform'
+      )
+  only:
+    refs:
+      - merge_requests
+      - master
+    changes:
+      - live/ris-bussvcs-prod/eu-west-1/dr/**/*
+      - live/*.hcl
+      - modules/**/*
+
+ris-bussvcs-prod/eu-west-1/dr:
+  extends: .deploy
+  variables:
+    ROOT_DIR: 'live/ris-bussvcs-prod/eu-west-1/dr'
+    AWS_PROFILE: 'ris-bussvcs-prod'
+  before_script:
+    - export ADFS_PROFILE=(
+        'ris-bussvcs-prod'
+      )
+    - export ADFS_ROLE_ARN=(
+        'arn:aws:iam::485575125510:role/ADFS-TAS-Terraform'
+      )
+  dependencies: [build-ris-bussvcs-prod/eu-west-1/dr]
+  environment:
+    name: ris-bussvcs-prod/eu-west-1/dr
+  only:
+    refs:
+      - master
+    changes:
+      - live/ris-bussvcs-prod/eu-west-1/dr/**/*
+      - live/*.hcl
+      - modules/**/*
+
+build-ris-bussvcs-prod/eu-west-1/production:
+  extends: .build
+  variables:
+    ROOT_DIR: 'live/ris-bussvcs-prod/eu-west-1/production'
+    AWS_PROFILE: 'ris-bussvcs-prod'
+  before_script:
+    - export ADFS_PROFILE=(
+        'ris-bussvcs-prod'
+      )
+    - export ADFS_ROLE_ARN=(
+        'arn:aws:iam::485575125510:role/ADFS-TAS-Terraform'
+      )
+  only:
+    refs:
+      - merge_requests
+      - master
+    changes:
+      - live/ris-bussvcs-prod/eu-west-1/production/**/*
+      - live/*.hcl
+      - modules/**/*
+
+ris-bussvcs-prod/eu-west-1/production:
+  extends: .deploy
+  variables:
+    ROOT_DIR: 'live/ris-bussvcs-prod/eu-west-1/production'
+    AWS_PROFILE: 'ris-bussvcs-prod'
+  before_script:
+    - export ADFS_PROFILE=(
+        'ris-bussvcs-prod'
+      )
+    - export ADFS_ROLE_ARN=(
+        'arn:aws:iam::485575125510:role/ADFS-TAS-Terraform'
+      )
+  dependencies: [build-ris-bussvcs-prod/eu-west-1/production]
+  environment:
+    name: ris-bussvcs-prod/eu-west-1/production
+  only:
+    refs:
+      - master
+    changes:
+      - live/ris-bussvcs-prod/eu-west-1/production/**/*
+      - live/*.hcl
+      - modules/**/*
+
+build-ris-bussvcs-prod/eu-west-1/staging:
+  extends: .build
+  variables:
+    ROOT_DIR: 'live/ris-bussvcs-prod/eu-west-1/staging'
+    AWS_PROFILE: 'ris-bussvcs-prod'
+  before_script:
+    - export ADFS_PROFILE=(
+        'ris-bussvcs-prod'
+      )
+    - export ADFS_ROLE_ARN=(
+        'arn:aws:iam::485575125510:role/ADFS-TAS-Terraform'
+      )
+  only:
+    refs:
+      - merge_requests
+      - master
+    changes:
+      - live/ris-bussvcs-prod/eu-west-1/staging/**/*
+      - live/*.hcl
+      - modules/**/*
+
+ris-bussvcs-prod/eu-west-1/staging:
+  extends: .deploy
+  variables:
+    ROOT_DIR: 'live/ris-bussvcs-prod/eu-west-1/staging'
+    AWS_PROFILE: 'ris-bussvcs-prod'
+  before_script:
+    - export ADFS_PROFILE=(
+        'ris-bussvcs-prod'
+      )
+    - export ADFS_ROLE_ARN=(
+        'arn:aws:iam::485575125510:role/ADFS-TAS-Terraform'
+      )
+  dependencies: [build-ris-bussvcs-prod/eu-west-1/staging]
+  environment:
+    name: ris-bussvcs-prod/eu-west-1/staging
+  only:
+    refs:
+      - master
+    changes:
+      - live/ris-bussvcs-prod/eu-west-1/staging/**/*
+      - live/*.hcl
+      - modules/**/*

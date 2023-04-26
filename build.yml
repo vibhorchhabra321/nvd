@@ -5,7 +5,7 @@ concurrency:
   group: build-${{ github.ref}}
 
 jobs:
-  build-ris-bussvcs-prod:
+  build-ris-bussvcscustomercloud-prod:
     runs-on: [Linux, ntt, uk, self-hosted]
     permissions:
       packages: read
@@ -22,49 +22,49 @@ jobs:
         id: changes
         with: 
           filters: |
-            dr: 
-              - live/ris-bussvcs-prod/eu-west-1/dr/**/*
+            ctest: 
+              - live/ris-bussvcscustomercloud-prod/us-east-2/ctest/**/*
               - live/*.hcl
               - modules/**/*
-            staging: 
-              - live/ris-bussvcs-prod/eu-west-1/staging/**/*
+            dr: 
+              - live/ris-bussvcscustomercloud-prod/us-east-2/dr/**/*
               - live/*.hcl
               - modules/**/*
             production: 
-              - live/ris-bussvcs-prod/eu-west-1/production/**/*
+              - live/ris-bussvcscustomercloud-prod/us-east-2/production/**/*
               - live/*.hcl
               - modules/**/*
     outputs: 
+      change_ctest: ${{ steps.changes.outputs.ctest }}
       change_dr: ${{ steps.changes.outputs.dr }}
-      change_staging: ${{ steps.changes.outputs.staging }}
       change_production: ${{ steps.changes.outputs.production }}
   build-dr:
     name: dr
-    needs: build-ris-bussvcs-prod
-    if: ${{ needs.build-ris-bussvcs-prod.outputs.change_dr == 'true' }}
+    needs: build-ris-bussvcscustomercloud-prod
+    if: ${{ needs.build-ris-bussvcscustomercloud-prod.outputs.change_dr == 'true' }}
     uses: LexisNexis-RBA/xg5-terraform/.github/workflows/build-action.yml@master
     with: 
       environment: 'dr'
-      working-directory: 'live/ris-bussvcs-prod/eu-west-1/dr'
+      working-directory: 'live/ris-bussvcscustomercloud-prod/us-east-2/dr'
     secrets: inherit
 
-  build-staging:
-    name: staging
-    needs: build-ris-bussvcs-prod
-    if: ${{ needs.build-ris-bussvcs-prod.outputs.change_staging == 'true' }}
+  build-ctest:
+    name: ctest
+    needs: build-ris-bussvcscustomercloud-prod
+    if: ${{ needs.build-ris-bussvcscustomercloud-prod.outputs.change_ctest == 'true' }}
     uses: LexisNexis-RBA/xg5-terraform/.github/workflows/build-action.yml@master
     with: 
-      environment: 'staging'
-      working-directory: 'live/ris-bussvcs-prod/eu-west-1/staging'
+      environment: 'ctest'
+      working-directory: 'live/ris-bussvcscustomercloud-prod/us-east-2/ctest'
     secrets: inherit
 
   build-prod:
     name: production
-    needs: build-ris-bussvcs-prod
-    if: ${{ needs.build-ris-bussvcs-prod.outputs.change_production == 'true' }}
+    needs: build-ris-bussvcscustomercloud-prod
+    if: ${{ needs.build-ris-bussvcscustomercloud-prod.outputs.change_production == 'true' }}
     uses: LexisNexis-RBA/xg5-terraform/.github/workflows/build-action.yml@master
     with: 
       environment: 'production'
-      working-directory: 'live/ris-bussvcs-prod/eu-west-1/production'
+      working-directory: 'live/ris-bussvcscustomercloud-prod/us-east-2/production'
     secrets: inherit
   

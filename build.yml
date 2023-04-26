@@ -1,0 +1,70 @@
+name: Build
+on:
+  pull_request: 
+concurrency: 
+  group: build-${{ github.ref}}
+
+jobs:
+  build-ris-bussvcs-prod:
+    runs-on: [Linux, ntt, uk, self-hosted]
+    permissions:
+      packages: read
+      id-token: write
+      contents: write
+      issues: write
+      pull-requests: write
+    steps: 
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      - name: check file changes
+        uses: LexisNexis-RBA/xg5-terraform/.github/actions/paths-filter@master
+        id: changes
+        with: 
+          filters: |
+            dr: 
+              - live/ris-bussvcs-prod/eu-west-1/dr/**/*
+              - live/*.hcl
+              - modules/**/*
+            staging: 
+              - live/ris-bussvcs-prod/eu-west-1/staging/**/*
+              - live/*.hcl
+              - modules/**/*
+            production: 
+              - live/ris-bussvcs-prod/eu-west-1/production/**/*
+              - live/*.hcl
+              - modules/**/*
+    outputs: 
+      change_dr: ${{ steps.changes.outputs.dr }}
+      change_staging: ${{ steps.changes.outputs.staging }}
+      change_production: ${{ steps.changes.outputs.production }}
+  build-dr:
+    name: dr
+    needs: build-ris-bussvcs-prod
+    if: ${{ needs.build-ris-bussvcs-prod.outputs.change_dr == 'true' }}
+    uses: LexisNexis-RBA/xg5-terraform/.github/workflows/build-action.yml@master
+    with: 
+      environment: 'dr'
+      working-directory: 'live/ris-bussvcs-prod/eu-west-1/dr'
+    secrets: inherit
+
+  build-staging:
+    name: staging
+    needs: build-ris-bussvcs-prod
+    if: ${{ needs.build-ris-bussvcs-prod.outputs.change_staging == 'true' }}
+    uses: LexisNexis-RBA/xg5-terraform/.github/workflows/build-action.yml@master
+    with: 
+      environment: 'staging'
+      working-directory: 'live/ris-bussvcs-prod/eu-west-1/staging'
+    secrets: inherit
+
+  build-prod:
+    name: production
+    needs: build-ris-bussvcs-prod
+    if: ${{ needs.build-ris-bussvcs-prod.outputs.change_production == 'true' }}
+    uses: LexisNexis-RBA/xg5-terraform/.github/workflows/build-action.yml@master
+    with: 
+      environment: 'production'
+      working-directory: 'live/ris-bussvcs-prod/eu-west-1/production'
+    secrets: inherit
+  
